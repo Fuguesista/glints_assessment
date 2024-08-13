@@ -17,7 +17,7 @@ def init_db(data_config, global_var):
 
 #connecting db
 def connect_db(data_config, global_var):
-    global_var["CON"] = sqlite3.connect(data_config["SQLLITE_FILE_NAME"])
+    global_var["CON"] = sqlite3.connect(data_config["SQLLITE_FILE_NAME"], check_same_thread=False)
     global_var["CUR"] = global_var["CON"].cursor()
 
 #disconnect db for shutdown worker
