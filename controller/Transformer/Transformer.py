@@ -8,7 +8,7 @@ def transformer_function(request_client:Request, response:Response, data_config:
         temp_return.append(data.upper())
         temp_return.append(data_input.list_2[i].upper())
     temp_result = ", ".join(temp_return)
-    id_data = TransformerModel.insert_data(data_config, global_var, temp_result)
+    id_data = TransformerModel.insert_data_sqlmodel(data_config, global_var, temp_result)
     if (id_data != None):
         return {
             "error" : 0,
@@ -24,16 +24,19 @@ def transformer_function(request_client:Request, response:Response, data_config:
         }
     
 def get_data_cache(request_client:Request, response:Response, data_config:dict, global_var:dict, id:int):
-    temp_return = TransformerModel.get_data(data_config, global_var, id)
-    if (len(temp_return) == 1):
-        return {
-            "error" : 0,
-            "output" : temp_return[0][1],
-            "message" : "OK"
-        }
-    else:
+    temp_return = TransformerModel.get_data_sqlmodel(data_config, global_var, id)
+    is_fail = False
+    if (temp_return == None):
+        is_fail = True
+    if (is_fail):
         response.status_code = status.HTTP_404_NOT_FOUND
         return {
             "error" : 1,
             "message" : "id not found"
+        }
+    else:
+        return {
+            "error" : 0,
+            "output" : temp_return.result_data,
+            "message" : "OK"
         }

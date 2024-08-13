@@ -1,5 +1,6 @@
 import sqlite3
 import os
+from sqlmodel import SQLModel, create_engine
 
 #initialize the sqllite db
 def init_db(data_config, global_var):
@@ -15,11 +16,24 @@ def init_db(data_config, global_var):
             pass
     global_var["CON"].close()
 
+def init_db_sqlmodel(data_config, global_var):
+    sqlite_url = f'sqlite:///{data_config["SQLLITE_FILE_NAME"]}'
+    global_var["engine"] = create_engine(sqlite_url, echo=False, pool_size=10, max_overflow=20)
+    SQLModel.metadata.create_all(global_var["engine"])
+
+
 #connecting db
 def connect_db(data_config, global_var):
     global_var["CON"] = sqlite3.connect(data_config["SQLLITE_FILE_NAME"], check_same_thread=False)
     global_var["CUR"] = global_var["CON"].cursor()
 
+def connect_db_sqlmodel(data_config, global_var):
+    sqlite_url = f'sqlite:///{data_config["SQLLITE_FILE_NAME"]}'
+    global_var["engine"] = create_engine(sqlite_url, echo=False)
+
 #disconnect db for shutdown worker
 def disconnect_db(data_config, global_var):
     global_var["CON"].close()
+
+def disconnect_db_sqlmodel(data_config, global_var):
+    pass

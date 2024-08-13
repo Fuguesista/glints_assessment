@@ -25,12 +25,12 @@ def get_transformers(request: Request, response: Response, id:int):
 def shutdown_routine():
     global data_config, global_var
     # make sure the connection is closed for the db
-    disconnect_db(data_config, global_var)
+    disconnect_db_sqlmodel(data_config, global_var)
 
 def startup_routine():
     global data_config, global_var
     # worker generate cursor after the file is generated
-    connect_db(data_config, global_var)
+    connect_db_sqlmodel(data_config, global_var)
 
 app.add_event_handler("shutdown", shutdown_routine)
 app.add_event_handler("startup", startup_routine)
@@ -38,5 +38,5 @@ app.add_event_handler("startup", startup_routine)
 if __name__ == "__main__":
     import uvicorn
     # generate db file for sqlite
-    init_db(data_config, global_var)
+    init_db_sqlmodel(data_config, global_var)
     uvicorn.run("main:app", workers=data_config["QTY_WORKER"], host="0.0.0.0", port=data_config["MAIN_PORT"], log_level="error")
